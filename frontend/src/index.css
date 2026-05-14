@@ -1,0 +1,139 @@
+:root {
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #0f172a;
+  background: #f1f5f9;
+  --primary: #0d9488;
+  --primary-dark: #0f766e;
+  --card: #ffffff;
+  --border: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--primary-dark);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+}
+
+.btn.secondary {
+  background: #64748b;
+}
+
+.btn.danger {
+  background: #dc2626;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+.grid-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.stat {
+  padding: 1rem;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  border: 1px solid #99f6e4;
+}
+
+.stat strong {
+  display: block;
+  font-size: 1.35rem;
+  color: #0f766e;
+}
+
+.stat span {
+  font-size: 0.8rem;
+  color: #475569;
+}

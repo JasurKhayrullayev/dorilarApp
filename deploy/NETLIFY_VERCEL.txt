@@ -1,0 +1,39 @@
+NETLIFY / VERCEL — FRONTEND (TEKIN)
+====================================
+Netlify va Vercel faqat STATIC sayt (React build) uchun. Django API alohida joyda turishi kerak.
+
+1) BEPUL POSTGRES (masalan Neon)
+   - https://neon.tech — ro'yxatdan o'ting, yangi Postgres yarating.
+   - "Connection string" ni nusxalang (DATABASE_URL).
+
+2) BEPUL API (Render)
+   - https://render.com — GitHub bilan kirib, "New" → "Blueprint".
+   - Ushbu loyiha reposini tanlang, render.yaml ishlatiladi.
+   - Environment o'zgaruvchilarni to'ldiring:
+     * DATABASE_URL = Neon dan nusxa
+     * DJANGO_ALLOWED_HOSTS = sizning-api.onrender.com (Render bergan hostname)
+     * CORS_ORIGINS = Netlify yoki Vercel domeningiz, vergul bilan:
+       https://sizning-sayt.netlify.app,https://sizning-sayt.vercel.app
+   - Deploy tugagach, API manzil: https://SIZNING-API.onrender.com
+
+3) NETLIFY (frontend)
+   - https://app.netlify.com — "Add new site" → "Import an existing project" → GitHub repo.
+   - Netlify avtomatik ildizdagi netlify.toml ni o'qiydi (base = frontend).
+   - Site settings → Environment variables:
+     * VITE_API_BASE = https://SIZNING-API.onrender.com/api
+       (oxirida /api bo'lsin)
+   - "Trigger deploy" qayta ishga tushiring (env build vaqtida kerak).
+
+4) VERCEL (frontend — Netlify o'rniga yoki qo'shimcha)
+   - https://vercel.com — "Add New" → "Project" → repo tanlang.
+   - "Root Directory" ni frontend qilib belgilang.
+   - Environment Variables:
+     * VITE_API_BASE = https://SIZNING-API.onrender.com/api
+   - Deploy.
+
+5) BIRINCHI MA'LUMOTLAR
+   - Render Shell yoki "Run command": python manage.py seed_demo
+   - Yoki mahalliyda superuser yaratib, Render Postgresga migratsiya qiling.
+
+ESLATMA: Render bepul rejimida server uxlaganda birinchi so'rov sekin bo'lishi mumkin.
+Mahsulot rasmlari (media) bepul diskda saqlanadi; Render disk cheklovlari bor — production uchun S3 kabi xizmat keyinroq qo'shiladi.

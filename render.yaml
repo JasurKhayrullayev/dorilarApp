@@ -1,0 +1,26 @@
+# Render.com — bepul Web Service (API).
+# Neon.tech yoki boshqa joydan DATABASE_URL oling va Render Dashboard-da Environment qo'shing.
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: bad-crm-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python manage.py migrate --noinput && gunicorn bad_crm.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: USE_SQLITE
+        value: "0"
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
