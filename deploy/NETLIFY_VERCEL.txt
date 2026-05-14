@@ -24,12 +24,17 @@ Netlify va Vercel faqat STATIC sayt (React build) uchun. Django API alohida joyd
        (oxirida /api bo'lsin)
    - "Trigger deploy" qayta ishga tushiring (env build vaqtida kerak).
 
-4) VERCEL (frontend — Netlify o'rniga yoki qo'shimcha)
+4) VERCEL (frontend)
    - https://vercel.com — "Add New" → "Project" → repo tanlang.
    - "Root Directory" ni frontend qilib belgilang.
-   - Environment Variables:
-     * VITE_API_BASE = https://SIZNING-API.onrender.com/api
-   - Deploy.
+   - Loyihada api/[...path].ts — /api/* so'rovlarini Django ga proksilaydi.
+   - Environment Variables (Production, Preview):
+     * BACKEND_ORIGIN = https://SIZNING-API.onrender.com
+       (faqat domen; oxirida /api BO'LMASIN)
+   - VITE_API_BASE ni bo'sh qoldiring yoki /api qilib qoldiring (standart).
+     Agar to'g'ridan-to'g'ri Render ga murojaat qilsangiz: VITE_API_BASE=https://...onrender.com/api
+     va CORS da Vercel domeni bo'lishi kerak.
+   - O'zgarishdan keyin "Redeploy".
 
 5) BIRINCHI MA'LUMOTLAR
    - Render Shell yoki "Run command": python manage.py seed_demo
