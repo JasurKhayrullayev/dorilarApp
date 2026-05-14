@@ -115,8 +115,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method in ("GET", "HEAD", "OPTIONS"):
-            return [IsAuthenticated]
-        return [IsAuthenticated(), CanManageCatalog]
+            return [IsAuthenticated()]
+        return [IsAuthenticated(), CanManageCatalog()]
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -125,8 +125,8 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method in ("GET", "HEAD", "OPTIONS"):
-            return [IsAuthenticated]
-        return [IsAuthenticated(), CanManageCatalog]
+            return [IsAuthenticated()]
+        return [IsAuthenticated(), CanManageCatalog()]
 
     def perform_destroy(self, instance):
         instance.soft_delete()
@@ -167,7 +167,7 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ("create", "update", "partial_update", "destroy"):
-            return [IsAuthenticated(), IsDoctor]
+            return [IsAuthenticated(), IsDoctor()]
         return [IsAuthenticated()]
 
     def get_queryset(self):
@@ -217,7 +217,7 @@ class CallLogViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ("create", "update", "partial_update", "destroy"):
-            return [IsAuthenticated(), IsOperator]
+            return [IsAuthenticated(), IsOperator()]
         return [IsAuthenticated()]
 
     def get_queryset(self):
