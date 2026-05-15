@@ -1,7 +1,19 @@
 import axios, { type AxiosError } from "axios";
 
+/** VITE_API_BASE ustuvor (oxirida /api). VITE_API_URL — faqat domen (Render), /api avtomatik qo'shiladi. */
+function apiBaseUrl(): string {
+  const base = import.meta.env.VITE_API_BASE?.trim();
+  if (base) return base.replace(/\/$/, "");
+  const host = import.meta.env.VITE_API_URL?.trim();
+  if (host) {
+    const h = host.replace(/\/$/, "");
+    return h.endsWith("/api") ? h : `${h}/api`;
+  }
+  return "/api";
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || "/api",
+  baseURL: apiBaseUrl(),
 });
 
 api.interceptors.request.use((config) => {
