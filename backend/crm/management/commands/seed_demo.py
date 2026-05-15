@@ -32,12 +32,18 @@ class Command(BaseCommand):
                     "role": role,
                     "first_name": first,
                     "is_staff": role == User.Role.ADMIN,
+                    "is_superuser": role == User.Role.ADMIN,
+                    "is_active": True,
                 },
             )
             if created or not u.has_usable_password():
                 u.set_password("demo123")
-                u.role = role
-                u.save()
+            u.role = role
+            u.is_active = True
+            if role == User.Role.ADMIN:
+                u.is_staff = True
+                u.is_superuser = True
+            u.save()
             self.stdout.write(self.style.SUCCESS(f"User {username} / demo123"))
 
         cat, _ = Category.objects.get_or_create(slug="vitaminlar", defaults={"name": "Vitaminlar"})
