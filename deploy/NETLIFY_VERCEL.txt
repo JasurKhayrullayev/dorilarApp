@@ -42,3 +42,12 @@ Netlify va Vercel faqat STATIC sayt (React build) uchun. Django API alohida joyd
 
 ESLATMA: Render bepul rejimida server uxlaganda birinchi so'rov sekin bo'lishi mumkin.
 Mahsulot rasmlari (media) bepul diskda saqlanadi; Render disk cheklovlari bor — production uchun S3 kabi xizmat keyinroq qo'shiladi.
+
+DOCKER (MONOREPO)
+=================
+- API image: reponing ILDIZIDAN:  docker build -t dorilar-api .
+  (ildizda Dockerfile bor; backend/ ichidagi Dockerfile — faqat context=backend bo'lganda.)
+- Frontend+nginx (docker compose ichidagi "web"): ildizdan  docker compose build
+  yoki:  docker build -f deploy/Dockerfile.web -t dorilar-web .
+- "open Dockerfile: no such file" — build konteksti noto'g'ri: har doim loyiha ildizi
+  (dorilarApp), deploy/ yoki backend/ emas (Dockerfile.web frontend uchun ildizni talab qiladi).

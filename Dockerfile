@@ -1,13 +1,13 @@
-# Context: backend/ papkasi — docker build -t api ./backend
-# Monorepo ildizidan build: repoda ildizdagi Dockerfile ishlating (docker build -t api .)
+# Monorepo ildizi: `docker build -t dorilar-api .`
+# (Coolify, GitHub Actions, ba'zi Docker-hostlar faqat ./Dockerfile ni kutadi.)
 FROM python:3.12-slim
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev gcc && rm -rf /var/lib/apt/lists/*
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
+COPY backend/ .
 RUN chmod +x entrypoint.sh
 EXPOSE 8000
 ENTRYPOINT ["./entrypoint.sh"]
