@@ -58,8 +58,16 @@ TEMPLATES = [
 WSGI_APPLICATION = "bad_crm.wsgi.application"
 
 _database_url = os.getenv("DATABASE_URL", "").strip()
+_use_sqlite_raw = os.getenv("USE_SQLITE", "").strip().lower()
+if _use_sqlite_raw in ("1", "true", "yes"):
+    _use_sqlite = True
+elif _use_sqlite_raw in ("0", "false", "no"):
+    _use_sqlite = False
+else:
+    # USE_SQLITE qoldirilmagan: mahalliy DEBUG + tashqi DB URL yo'q → SQLite (Postgres "refused" oldini olish)
+    _use_sqlite = DEBUG and not _database_url
 
-if os.getenv("USE_SQLITE", "0") == "1":
+if _use_sqlite:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
