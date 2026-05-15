@@ -16,6 +16,7 @@ services:
         value: "0"
       - key: USE_SQLITE
         value: "0"
+      # Render Dashboard: dorilarapp.onrender.com (https:// va vergul — faqat hostname)
       - key: DJANGO_ALLOWED_HOSTS
         sync: false
       - key: DJANGO_SECRET_KEY

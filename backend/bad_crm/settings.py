@@ -10,7 +10,27 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-insecure-change-me")
 DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
+
+
+def _parse_allowed_hosts(raw: str) -> list[str]:
+    """ALLOWED_HOSTS — faqat domen (https:// yo'q). CORS_ORIGINS bilan aralashtirmang."""
+    out: list[str] = []
+    for part in raw.split(","):
+        h = part.strip()
+        if not h:
+            continue
+        for prefix in ("https://", "http://"):
+            if h.lower().startswith(prefix):
+                h = h[len(prefix) :]
+        h = h.split("/")[0].strip()
+        if h:
+            out.append(h)
+    return out
+
+
+ALLOWED_HOSTS = _parse_allowed_hosts(
+    os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
