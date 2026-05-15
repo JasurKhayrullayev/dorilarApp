@@ -1,14 +1,12 @@
 services:
   db:
     image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-bad_crm}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bad_crm}
-      POSTGRES_DB: ${POSTGRES_DB:-bad_crm}
+    env_file:
+      - ./backend/.env
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bad_crm} -d ${POSTGRES_DB:-bad_crm}"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -22,18 +20,14 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
+    env_file:
+      - ./backend/.env
     environment:
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-insecure-change-me}
-      DJANGO_DEBUG: ${DJANGO_DEBUG:-0}
-      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend,web}
+      # Docker tarmog'i: mahalliy .env dagi localhost emas, db servisi
       POSTGRES_HOST: db
       POSTGRES_PORT: "5432"
-      POSTGRES_DB: ${POSTGRES_DB:-bad_crm}
-      POSTGRES_USER: ${POSTGRES_USER:-bad_crm}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bad_crm}
-      REDIS_URL: redis://redis:6379/0
       USE_SQLITE: "0"
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://127.0.0.1,http://localhost:5173,http://127.0.0.1:5173}
+      REDIS_URL: redis://redis:6379/0
       SEED_DEMO: ${SEED_DEMO:-0}
       GUNICORN_WORKERS: ${GUNICORN_WORKERS:-3}
     volumes:
