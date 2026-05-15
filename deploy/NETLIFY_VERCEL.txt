@@ -31,6 +31,9 @@ Netlify va Vercel faqat STATIC sayt (React build) uchun. Django API alohida joyd
    - Environment Variables (Production, Preview):
      * BACKEND_ORIGIN = https://SIZNING-API.onrender.com
        (faqat domen; oxirida /api BO'LMASIN)
+     * VITE_API_URL = https://SIZNING-API.onrender.com
+       (VITE_API_BASE bo'sh bo'lsa; client avtomatik /api qo'shadi)
+       yoki to'g'ridan: VITE_API_BASE=https://...onrender.com/api
    - VITE_API_BASE ni bo'sh qoldiring yoki /api qilib qoldiring (standart).
      Agar to'g'ridan-to'g'ri Render ga murojaat qilsangiz: VITE_API_BASE=https://...onrender.com/api
      va CORS da Vercel domeni bo'lishi kerak.

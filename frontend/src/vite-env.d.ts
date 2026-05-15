@@ -1,10 +1,14 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** To'liq API ildizi, oxirida /api. Masalan https://dorilarapp.onrender.com/api */
+  /** To'liq API ildizi, oxirida /api */
   readonly VITE_API_BASE?: string;
-  /** Ixtiyoriy: faqat domen. Masalan https://dorilarapp.onrender.com — client /api qo'shadi */
+  /** VITE_API_BASE bilan bir xil ma'noda (nomlangan qayta nom) */
+  readonly VITE_BACKEND_URL?: string;
+  /** Faqat domen — /api qo'shiladi */
   readonly VITE_API_URL?: string;
+  /** VITE_API_URL bilan bir xil ma'noda */
+  readonly VITE_BACKEND_ORIGIN?: string;
 }
 
 interface ImportMeta {
