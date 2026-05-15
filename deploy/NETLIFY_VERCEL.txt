@@ -36,7 +36,13 @@ Netlify va Vercel faqat STATIC sayt (React build) uchun. Django API alohida joyd
      va CORS da Vercel domeni bo'lishi kerak.
    - O'zgarishdan keyin "Redeploy".
 
-5) BIRINCHI MA'LUMOTLAR
+5) MUAMMO: login 405 / CORS / Network error
+   - Vercel: vercel.json SPA qoidasi /api/* ni index.html ga yubormasligi kerak (loyihada tuzatilgan).
+   - To'g'ridan-to'g'ri Render ga so'rov: Render env CORS_ORIGINS ga https://...vercel.app qo'shing
+     yoki CORS_VERCEL_APP_REGEX=1 (barcha *.vercel.app).
+   - VITE_API_BASE=/api ishlatsangiz: Vercelda BACKEND_ORIGIN=https://...onrender.com (oxirida /api yo'q).
+
+6) BIRINCHI MA'LUMOTLAR
    - Render Shell yoki "Run command": python manage.py seed_demo
    - Yoki mahalliyda superuser yaratib, Render Postgresga migratsiya qiling.
 

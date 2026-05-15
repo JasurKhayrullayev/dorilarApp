@@ -142,6 +142,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
+# Vercel preview / production *.vercel.app — ro'yxatga har safar qo'shish noqulay bo'lsa (ixtiyoriy):
+# CORS_VERCEL_APP_REGEX=1  (.env yoki Render env)
+if os.getenv("CORS_VERCEL_APP_REGEX", "").strip().lower() in ("1", "true", "yes"):
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https://[\w.-]+\.vercel\.app$",
+    ]
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
