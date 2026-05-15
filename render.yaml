@@ -8,7 +8,7 @@ services:
     plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate --noinput && python manage.py create_demo_user && gunicorn bad_crm.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: python manage.py migrate --noinput && echo "from django.contrib.auth import get_user_model; U=get_user_model(); U.objects.filter(username='admin').exists() or U.objects.create_superuser('admin','admin@example.com','demo123')" | python manage.py shell && gunicorn bad_crm.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.3"
