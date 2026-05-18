@@ -22,9 +22,9 @@ const STATS = [
   },
   {
     key: "today_sales_sum" as keyof Dash,
-    label: "Bugungi tushum",
+    label: "Bugungi tushum (so'm)",
     icon: "💰",
-    format: (v: string | number) => fmtSum(v),
+    format: (v: string | number) => fmtSum(v, false),
     cls: "",
   },
   {

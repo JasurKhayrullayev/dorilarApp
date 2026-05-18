@@ -188,7 +188,7 @@ tbody tr:last-child td { border-bottom: none; }
 /* ─── Dashboard stat grid ────────────────────────────────── */
 .grid-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -200,7 +200,9 @@ tbody tr:last-child td { border-bottom: none; }
   box-shadow: 0 1px 4px rgb(15 23 42 / 0.05);
   transition: box-shadow 0.15s, transform 0.15s;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  min-width: 0;
+  word-break: break-word;
 }
 .stat:hover { box-shadow: 0 4px 12px rgb(15 23 42 / 0.1); transform: translateY(-1px); }
 .stat::before {
@@ -216,16 +218,21 @@ tbody tr:last-child td { border-bottom: none; }
 .stat.info::before  { background: #6366f1; }
 .stat strong {
   display: block;
-  font-size: 1.6rem;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
   font-weight: 700;
   color: #0f172a;
-  line-height: 1.2;
+  line-height: 1.25;
   margin-bottom: 0.25rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  padding-right: 1.6rem; /* ikonadan joy */
 }
 .stat span {
   font-size: 0.78rem;
   color: var(--text-muted);
   font-weight: 500;
+  display: block;
+  line-height: 1.35;
 }
 .stat .stat-icon {
   position: absolute;
