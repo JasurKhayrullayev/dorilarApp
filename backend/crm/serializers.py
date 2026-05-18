@@ -337,9 +337,12 @@ class SaleCreateSerializer(serializers.Serializer):
             rx.status = Prescription.Status.PARTIAL
         rx.save(update_fields=["status", "updated_at"])
 
-        body = f"Sotuv #{sale.id}: {total} so'm."
+        def fmt(v):
+            return f"{int(v):,}".replace(",", "\u202f")
+
+        body = f"Sotuv #{sale.id}: {fmt(total)} so'm."
         if total_discount > 0:
-            body += f" Chegirma: {total_discount} so'm."
+            body += f" Chegirma: {fmt(total_discount)} so'm."
         Notification.objects.create(
             recipient=None,
             customer=customer,

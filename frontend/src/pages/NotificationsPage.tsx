@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/client";
 import { fmtDate } from "../utils/helpers";
+import { useNotif } from "../auth/NotifContext";
 
 type Notif = {
   id: number;
@@ -17,6 +18,7 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr]     = useState("");
   const [markingAll, setMarkingAll] = useState(false);
+  const { setUnread } = useNotif();
 
   async function load() {
     setLoading(true);
@@ -35,7 +37,11 @@ export default function NotificationsPage() {
   async function markRead(id: number) {
     try {
       await api.post(`/notifications/${id}/mark_read/`);
-      setRows((prev) => prev.map((n) => n.id === id ? { ...n, is_read: true } : n));
+      setRows((prev) => {
+        const updated = prev.map((n) => n.id === id ? { ...n, is_read: true } : n);
+        setUnread(updated.filter((n) => !n.is_read).length);
+        return updated;
+      });
     } catch { /* silent */ }
   }
 
@@ -44,6 +50,7 @@ export default function NotificationsPage() {
     try {
       await api.post("/notifications/mark_all_read/");
       setRows((prev) => prev.map((n) => ({ ...n, is_read: true })));
+      setUnread(0);
     } catch {
       setErr("Xato yuz berdi.");
     } finally {

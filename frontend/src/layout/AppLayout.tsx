@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import { NavLink, Outlet, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
-import api from "../api/client";
+import { useNotif } from "../auth/NotifContext";
 
 const NAV = [
   { to: "/panel",              label: "🏠 Boshqaruv",       roles: ["admin","manager","doctor","pharmacist","operator"], end: true },
@@ -25,22 +24,7 @@ const ROLE_LABEL: Record<string, string> = {
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [unread, setUnread] = useState(0);
-
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-
-    async function fetchUnread() {
-      try {
-        const { data } = await api.get<{ unread_notifications?: number }>("/dashboard/");
-        setUnread(data.unread_notifications ?? 0);
-      } catch { /* silent */ }
-    }
-
-    void fetchUnread();
-    interval = setInterval(fetchUnread, 60_000);
-    return () => clearInterval(interval);
-  }, []);
+  const { unread } = useNotif();
 
   if (!user) return <Navigate to="/kirish" replace />;
 
