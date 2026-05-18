@@ -22,5 +22,7 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("me/", views.MeView.as_view(), name="me"),
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
+    path("reports/", views.ReportsView.as_view(), name="reports"),
+    path("expiry-alerts/", views.ExpiryAlertView.as_view(), name="expiry_alerts"),
     path("", include(router.urls)),
 ]

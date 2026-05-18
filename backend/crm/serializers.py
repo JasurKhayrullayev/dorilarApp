@@ -227,6 +227,41 @@ class SaleItemWriteSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(min_value=1)
 
 
+def _apply_promotions(product, qty, unit_price, customer):
+    """
+    Faol aksiyalarni tekshirib, chegirma summasini qaytaradi.
+    Ustuvorlik: percent > one_plus_one > bundle > loyal.
+    """
+    from django.utils import timezone as tz
+    now = tz.now()
+    promos = Promotion.objects.filter(
+        is_active=True,
+        deleted_at__isnull=True,
+        starts_at__lte=now,
+        ends_at__gte=now,
+        products=product,
+    ).order_by("promo_type")
+
+    discount = 0
+    for promo in promos:
+        if promo.promo_type == Promotion.PromoType.PERCENT and promo.percent:
+            discount = unit_price * qty * promo.percent / 100
+            break
+        elif promo.promo_type == Promotion.PromoType.ONE_PLUS_ONE:
+            # Har ikkita uchun bittasi bepul
+            free_qty = qty // 2
+            discount = unit_price * free_qty
+            break
+        elif promo.promo_type == Promotion.PromoType.LOYAL:
+            # Takroriy xaridor: kamida 1 ta oldingi sotuv bo'lsa
+            has_prev = Sale.objects.filter(customer=customer, deleted_at__isnull=True).exists()
+            if has_prev and promo.percent:
+                discount = unit_price * qty * promo.percent / 100
+                break
+
+    return discount
+
+
 class SaleCreateSerializer(serializers.Serializer):
     prescription = serializers.PrimaryKeyRelatedField(queryset=Prescription.objects.all())
     items = SaleItemWriteSerializer(many=True)
@@ -241,6 +276,7 @@ class SaleCreateSerializer(serializers.Serializer):
         customer = rx.customer
 
         total = 0
+        total_discount = 0
         sale_lines = []
         for line in items_in:
             product = line["product"]
@@ -260,18 +296,21 @@ class SaleCreateSerializer(serializers.Serializer):
                     {"items": f"{product.name}: omborda yetarli emas."}
                 )
             unit_price = product.price
-            line_total = unit_price * qty
+            discount = _apply_promotions(product, qty, unit_price, customer)
+            line_total = unit_price * qty - discount
             total += line_total
-            sale_lines.append((product, qty, unit_price, line_total, pitem))
+            total_discount += discount
+            sale_lines.append((product, qty, unit_price, line_total, discount, pitem))
 
         sale = Sale.objects.create(
             prescription=rx,
             pharmacist=pharmacist,
             customer=customer,
             total_amount=total,
+            discount_amount=total_discount,
             notes=validated_data.get("notes", ""),
         )
-        for product, qty, unit_price, line_total, pitem in sale_lines:
+        for product, qty, unit_price, line_total, discount, pitem in sale_lines:
             SaleItem.objects.create(
                 sale=sale,
                 product=product,
@@ -298,13 +337,16 @@ class SaleCreateSerializer(serializers.Serializer):
             rx.status = Prescription.Status.PARTIAL
         rx.save(update_fields=["status", "updated_at"])
 
+        body = f"Sotuv #{sale.id}: {total} so'm."
+        if total_discount > 0:
+            body += f" Chegirma: {total_discount} so'm."
         Notification.objects.create(
             recipient=None,
             customer=customer,
-            title="Sotuv",
-            body=f"Sotuv #{sale.id} muvaffaqiyatli: {total} so'm.",
+            title="Sotuv tasdiqlandi",
+            body=body,
             channel=Notification.Channel.TELEGRAM,
-            delivery_status="skipped_demo",
+            delivery_status="pending",
         )
         return sale
 
