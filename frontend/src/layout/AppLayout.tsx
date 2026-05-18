@@ -1,74 +1,98 @@
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import api from "../api/client";
 
-const nav = [
-  { to: "/panel", label: "Boshqaruv", roles: ["admin", "manager", "doctor", "pharmacist", "operator"] },
-  { to: "/panel/mijozlar", label: "Mijozlar", roles: ["admin", "manager", "doctor", "pharmacist", "operator"] },
-  { to: "/panel/mahsulotlar", label: "Mahsulotlar", roles: ["admin", "manager", "doctor", "pharmacist", "operator"] },
-  { to: "/panel/retseptlar", label: "Retseptlar", roles: ["admin", "manager", "doctor", "pharmacist"] },
-  { to: "/panel/sotuvlar", label: "Sotuvlar", roles: ["admin", "manager", "doctor", "pharmacist"] },
-  { to: "/panel/qongiroqlar", label: "Qo'ng'iroqlar", roles: ["admin", "manager", "operator"] },
-  { to: "/panel/aksiyalar", label: "Aksiyalar", roles: ["admin", "manager"] },
-  { to: "/panel/ombor", label: "Ombor", roles: ["admin", "manager"] },
-  { to: "/panel/foydalanuvchilar", label: "Foydalanuvchilar", roles: ["admin"] },
-  { to: "/panel/audit", label: "Audit jurnali", roles: ["admin"] },
+const NAV = [
+  { to: "/panel",              label: "🏠 Boshqaruv",       roles: ["admin","manager","doctor","pharmacist","operator"], end: true },
+  { to: "/panel/mijozlar",     label: "👥 Mijozlar",         roles: ["admin","manager","doctor","pharmacist","operator"] },
+  { to: "/panel/mahsulotlar",  label: "💊 Mahsulotlar",      roles: ["admin","manager","doctor","pharmacist","operator"] },
+  { to: "/panel/retseptlar",   label: "📋 Retseptlar",       roles: ["admin","manager","doctor","pharmacist"] },
+  { to: "/panel/sotuvlar",     label: "🛒 Sotuvlar",         roles: ["admin","manager","doctor","pharmacist"] },
+  { to: "/panel/qongiroqlar",  label: "📞 Qo'ng'iroqlar",   roles: ["admin","manager","operator"] },
+  { to: "/panel/aksiyalar",    label: "🎁 Aksiyalar",        roles: ["admin","manager"] },
+  { to: "/panel/ombor",        label: "📦 Ombor",            roles: ["admin","manager"] },
+  { to: "/panel/foydalanuvchilar", label: "⚙️ Foydalanuvchilar", roles: ["admin"] },
+  { to: "/panel/audit",        label: "🔍 Audit jurnali",    roles: ["admin"] },
 ];
+
+const ROLE_LABEL: Record<string, string> = {
+  admin: "Administrator", manager: "Menejer",
+  doctor: "Vrach", pharmacist: "Aptekachi", operator: "Operator",
+};
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+
+    async function fetchUnread() {
+      try {
+        const { data } = await api.get<{ unread_notifications?: number }>("/dashboard/");
+        setUnread(data.unread_notifications ?? 0);
+      } catch { /* silent */ }
+    }
+
+    void fetchUnread();
+    interval = setInterval(fetchUnread, 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
   if (!user) return <Navigate to="/kirish" replace />;
 
-  const links = nav.filter((n) => n.roles.includes(user.role));
+  const links = NAV.filter((n) => n.roles.includes(user.role));
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <aside
-        style={{
-          width: 220,
-          background: "#0f172a",
-          color: "#e2e8f0",
-          padding: "1rem 0",
-          flexShrink: 0,
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-        }}
-      >
-        <div style={{ padding: "0 1rem 1rem", borderBottom: "1px solid #334155" }}>
-          <strong style={{ color: "#5eead4" }}>BAD Sales CRM</strong>
-          <div style={{ fontSize: "0.8rem", marginTop: "0.35rem", opacity: 0.85 }}>
-            {user.first_name || user.username}
+    <div className="layout">
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <strong>BAD Sales CRM</strong>
+            {unread > 0 && (
+              <span
+                className="notif-bell"
+                title={`${unread} ta o'qilmagan bildirishnoma`}
+                style={{ color: "#94a3b8", fontSize: "1.1rem" }}
+              >
+                🔔
+                <span className="notif-count">{unread > 99 ? "99+" : unread}</span>
+              </span>
+            )}
+          </div>
+          <div className="sidebar-user">
+            <span style={{ color: "#e2e8f0", fontWeight: 600 }}>
+              {user.first_name || user.username}
+            </span>
             <br />
-            <span style={{ textTransform: "capitalize" }}>{user.role}</span>
+            <span style={{ fontSize: "0.72rem" }}>
+              {ROLE_LABEL[user.role] ?? user.role}
+            </span>
           </div>
         </div>
-        <div style={{ flex: 1, overflow: "auto" }}>
-          <nav style={{ display: "flex", flexDirection: "column", marginTop: "0.75rem" }}>
-            {links.map((l) => (
+
+        <nav className="sidebar-nav">
+          {links.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
-              end={l.to === "/panel"}
-              style={({ isActive }) => ({
-                padding: "0.55rem 1rem",
-                color: isActive ? "#0f172a" : "#cbd5e1",
-                background: isActive ? "#5eead4" : "transparent",
-                textDecoration: "none",
-                fontSize: "0.9rem",
-              })}
+              end={l.end}
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
               {l.label}
             </NavLink>
-            ))}
-          </nav>
-        </div>
-        <div style={{ padding: "1rem", marginTop: "auto", borderTop: "1px solid #334155" }}>
-          <button type="button" className="btn secondary" style={{ width: "100%" }} onClick={logout}>
-            Chiqish
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <button type="button" className="btn secondary" style={{ width: "100%", fontSize: "0.82rem" }} onClick={logout}>
+            ↩ Chiqish
           </button>
         </div>
       </aside>
-      <main style={{ flex: 1, padding: "1.5rem", overflow: "auto" }}>
+
+      <main className="main-content">
         <Outlet />
       </main>
     </div>
