@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, Navigate } from "react-router-dom";
+import { NavLink, Outlet, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import api from "../api/client";
 
@@ -12,6 +12,7 @@ const NAV = [
   { to: "/panel/qongiroqlar",  label: "📞 Qo'ng'iroqlar",   roles: ["admin","manager","operator"] },
   { to: "/panel/aksiyalar",    label: "🎁 Aksiyalar",        roles: ["admin","manager"] },
   { to: "/panel/ombor",        label: "📦 Ombor",            roles: ["admin","manager"] },
+  { to: "/panel/bildirishnomalar", label: "🔔 Bildirishnomalar", roles: ["admin","manager","doctor","pharmacist","operator"] },
   { to: "/panel/foydalanuvchilar", label: "⚙️ Foydalanuvchilar", roles: ["admin"] },
   { to: "/panel/audit",        label: "🔍 Audit jurnali",    roles: ["admin"] },
 ];
@@ -23,6 +24,7 @@ const ROLE_LABEL: Record<string, string> = {
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
@@ -50,16 +52,17 @@ export default function AppLayout() {
         <div className="sidebar-brand">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <strong>BAD Sales CRM</strong>
-            {unread > 0 && (
-              <span
-                className="notif-bell"
-                title={`${unread} ta o'qilmagan bildirishnoma`}
-                style={{ color: "#94a3b8", fontSize: "1.1rem" }}
-              >
-                🔔
+            <span
+              className="notif-bell"
+              title={unread > 0 ? `${unread} ta o'qilmagan bildirishnoma` : "Bildirishnomalar"}
+              style={{ color: "#94a3b8", fontSize: "1.1rem" }}
+              onClick={() => navigate("/panel/bildirishnomalar")}
+            >
+              🔔
+              {unread > 0 && (
                 <span className="notif-count">{unread > 99 ? "99+" : unread}</span>
-              </span>
-            )}
+              )}
+            </span>
           </div>
           <div className="sidebar-user">
             <span style={{ color: "#e2e8f0", fontWeight: 600 }}>

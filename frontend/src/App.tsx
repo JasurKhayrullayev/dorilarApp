@@ -13,6 +13,7 @@ import PromotionsPage from "./pages/PromotionsPage";
 import InventoryPage from "./pages/InventoryPage";
 import UsersPage from "./pages/UsersPage";
 import AuditPage from "./pages/AuditPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 function RequireAuth({ children }: { children: ReactElement }) {
   const { user, loading } = useAuth();
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="ombor" element={<InventoryPage />} />
         <Route path="foydalanuvchilar" element={<UsersPage />} />
         <Route path="audit" element={<AuditPage />} />
+        <Route path="bildirishnomalar" element={<NotificationsPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/panel" replace />} />
       <Route path="*" element={<Navigate to="/panel" replace />} />
